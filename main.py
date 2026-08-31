@@ -1,4 +1,7 @@
 import cv2
+from mtcnn import MTCNN
+from mtcnn.utils.plotting import plot
+import matplotlib.pyplot as plt
 
 def procesar_video(ruta_video):
     '''
@@ -6,6 +9,7 @@ def procesar_video(ruta_video):
     y la muestra por pantalla
     '''
     cap = cv2.VideoCapture(ruta_video)
+    mtcnn = MTCNN()
 
     #Comprobamos que se haya abierto correctamente
     if not cap.isOpened():
@@ -23,12 +27,30 @@ def procesar_video(ruta_video):
     else:
         delay = 30
 
+    contador_frames = 0
+    caras_detectadas = []
     #Mostramos cada frame en bucle hasta que se produzca un error o fin de video
     while True:
         ret, frame = cap.read()
         if not ret:
             print("Error al visualizar el video.")
             break
+
+        contador_frames += 1
+
+        if contador_frames % 5 == 0:
+            rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            caras_detectadas = mtcnn.detect_faces(rgb_frame)
+
+        for cara in caras_detectadas:
+            confianza = cara["confidence"]
+
+            if confianza > 0.9:  
+                x, y, w, h = cara["box"]
+                cv2.rectangle(frame, (x,y), (x+w,y+h), (255,0,0), 2)
+                texto = f"Confianza del {confianza*100:.2f}"
+                cv2.putText(frame,texto, (x,y-10), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,0,0), 2)
+
         cv2.imshow("Video",frame)
 
         if cv2.waitKey(delay) & 0xFF == ord('q'):
