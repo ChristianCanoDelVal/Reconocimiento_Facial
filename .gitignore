@@ -1,0 +1,10 @@
+# Caché de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Configuración del editor (VS Code)
+.vscode/
+
+# Archivos de video 
+*.mp4
