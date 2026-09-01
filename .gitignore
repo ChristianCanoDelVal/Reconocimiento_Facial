@@ -8,4 +8,5 @@ __pycache__/
 
 # Archivos de video y fotos
 prueba_lourdes.mp4
+*.mp4
 Lourdes.jpg
