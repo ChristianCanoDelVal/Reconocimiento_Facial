@@ -2,7 +2,8 @@ import cv2
 import mediapipe as mp
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
-from deepface import DeepFace
+from registrar import acceso_usuario
+import argparse
 
 def procesar_video(ruta_video):
     '''
@@ -50,9 +51,18 @@ def procesar_video(ruta_video):
                         y = bbox.origin_y
                         w = bbox.width
                         h = bbox.height
-                        cv2.rectangle(frame, (x,y), (x+w,y+h), (255,0,0),2)
-                        texto = f"Confianza del {confianza*100:.2f}%"
-                        cv2.putText(frame, texto, (x,y-10), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,0,0), 2)
+
+                        rostro_persona = frame[y:y+h,x:x+w]
+                        if rostro_persona.size > 0:
+                            nombre_persona = acceso_usuario(rostro_persona)
+                            texto = f"PERSONA NO IDENTIFICADA"
+                            color_cara = (0,0,255)
+                            if nombre_persona:
+                                texto = f"BIENVENIDO {nombre_persona}"
+                                color_cara = (0,255,0)
+
+                            cv2.rectangle(frame, (x,y), (x+w,y+h), color_cara,2)
+                            cv2.putText(frame, texto, (x,y-10), cv2.FONT_HERSHEY_SIMPLEX, 1, color_cara, 2)
 
             cv2.imshow("Control de acceso",frame)
 
@@ -65,5 +75,9 @@ def procesar_video(ruta_video):
 
 
 if __name__ == '__main__':
-    ruta_video = "prueba.mp4"
-    procesar_video(ruta_video)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("ruta_video")
+    args = parser.parse_args()
+
+    #ruta_video = "prueba.mp4"
+    procesar_video(args.ruta_video)
