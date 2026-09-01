@@ -113,6 +113,8 @@ def registrar_nuevo_usuario(nombre, ruta_img):
         print(f"Error al registrar : {e}")
         return
 
+#def eliminar_usuario_antiguo():
+
 if __name__== "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("nombre")

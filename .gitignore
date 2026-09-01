@@ -6,5 +6,6 @@ __pycache__/
 # Configuración del editor (VS Code)
 .vscode/
 
-# Archivos de video 
+# Archivos de video y fotos
 *.mp4
+*.jpg
