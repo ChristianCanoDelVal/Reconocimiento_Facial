@@ -67,7 +67,7 @@ def acceso_usuario(imagen):
 
 def registrar_nuevo_usuario(nombre, ruta_img):
     '''
-    Toma el nombre y ruta completa de la imagen del nuevo usuario y lo registra en la base de datos
+    Toma el nombre y ruta de la imagen del nuevo usuario y lo registra en la base de datos
     '''
     if not os.path.exists(ruta_img):
         print("La imagen no existe")
@@ -132,11 +132,56 @@ def registrar_nuevo_usuario(nombre, ruta_img):
         print(f"Error al registrar : {e}")
         return
 
-#def eliminar_usuario_antiguo():
+def eliminar_usuario_antiguo(nombre):
+    '''
+    Eliminamos los datos(embedding) del usuario 
+    '''
+    archivo_pkl = "embeddings.pkl"
+    base_datos_vectores = {}
 
-if __name__== "__main__":
+    if not os.path.exists(archivo_pkl):
+        print(f"No hay datos guardados de {nombre}")
+        return
+
+    with open(archivo_pkl, 'rb') as f:
+        base_datos_vectores = pickle.load(f)
+
+    if nombre in base_datos_vectores.keys():
+        del base_datos_vectores[nombre]
+
+        with open(archivo_pkl, 'wb') as f:
+            pickle.dump(base_datos_vectores, f)
+
+        print(f"Datos de {nombre} eliminados")
+        return
+
+    print(f"No hay datos guardados de {nombre}")
+
+
+if __name__ == "__main__":
+    '''
+    python registrar.py añadir <nombre> <ruta_imagen>
+    python registrar.py eliminar <nombre>
+    '''
     parser = argparse.ArgumentParser()
-    parser.add_argument("nombre")
-    parser.add_argument("ruta_img")
+    
+    # Creamos los subcomandos
+    subparsers = parser.add_subparsers(dest="accion")
+
+    # Comando 1: Añadir
+    parser_add = subparsers.add_parser("añadir",)
+    parser_add.add_argument("nombre")
+    parser_add.add_argument("ruta_img")
+
+    # Comando 2: Eliminar
+    parser_remove = subparsers.add_parser("eliminar")
+    parser_remove.add_argument("nombre")
+
     args = parser.parse_args()
-    registrar_nuevo_usuario(args.nombre, args.ruta_img)
+
+    if args.accion == "añadir":
+        registrar_nuevo_usuario(args.nombre, args.ruta_img)
+    elif args.accion == "eliminar":
+        eliminar_usuario_antiguo(args.nombre)
+    else:
+        print("Comando equivocado")
