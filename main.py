@@ -2,14 +2,17 @@ import cv2
 import mediapipe as mp
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
-from registrar import acceso_usuario
+from registrar import acceso_usuario, calentamiento
 import argparse
+
+
 
 def procesar_video(ruta_video):
     '''
     Toma la ruta de un video o 0 en caso de ser la camara del propio pc
     y la muestra por pantalla
     '''
+    calentamiento()
     cap = cv2.VideoCapture(ruta_video)
     base_options = python.BaseOptions(model_asset_path='blaze_face_short_range.tflite')
     options = vision.FaceDetectorOptions(base_options=base_options)
@@ -35,7 +38,6 @@ def procesar_video(ruta_video):
         while True:
             exito, frame = cap.read()
             if not exito:
-                print("Error al visualizar el video.")
                 break
 
             rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)

@@ -8,6 +8,21 @@ from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 import cv2
 
+def calentamiento():
+    '''
+    Para que no se produzca un tiron al detectar la primera cara hacemos que 
+    empiece con una imagen falsa y asi estará listo para el video/camara
+    '''
+    imagen_falsa = np.zeros((224, 224, 3), dtype=np.uint8)
+
+    try:
+        DeepFace.represent(img_path=imagen_falsa, 
+                        model_name="VGG-Face", 
+                        enforce_detection=False,
+                        detector_backend="skip")
+    except:
+        pass # Ignoramos cualquier error de esta prueba falsa
+
 def acceso_usuario(imagen):
     '''
     Recibe la imagen y en caso de detectar que es un trabajador devuelve su 
@@ -22,7 +37,7 @@ def acceso_usuario(imagen):
 
     try:
         resultado = DeepFace.represent(img_path=imagen, 
-                                        model_name="Facenet", 
+                                        model_name="VGG-Face", 
                                         enforce_detection=False,
                                         detector_backend="skip")
         vec = resultado[0]["embedding"]
@@ -40,7 +55,7 @@ def acceso_usuario(imagen):
 
             print(f"Comparando con {nombre}: Distancia = {dist}")
 
-        umbral = 0.8
+        umbral = 1.05
         if min_dist > umbral:
             return None
 
@@ -103,7 +118,7 @@ def registrar_nuevo_usuario(nombre, ruta_img):
                 return
             
             resultado = DeepFace.represent(img_path=rostro_persona, 
-                                            model_name="Facenet", 
+                                            model_name="VGG-Face", 
                                             enforce_detection=False,
                                             detector_backend="skip")
             base_datos_vectores[nombre] = resultado[0]["embedding"]
