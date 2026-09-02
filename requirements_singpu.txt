@@ -1,0 +1,8 @@
+deepface==0.0.100
+mediapipe==1.0.1
+numpy==2.1.3
+opencv-python==5.0.0.93
+tensorflow==2.19.1
+tf_keras==2.19.0
+pandas==2.3.3
+scipy
