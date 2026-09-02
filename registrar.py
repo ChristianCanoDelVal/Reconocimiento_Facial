@@ -1,7 +1,7 @@
+import os
 import pickle
 from deepface import DeepFace
 import argparse
-import os
 import numpy as np
 import mediapipe as mp
 from mediapipe.tasks import python
@@ -22,7 +22,7 @@ def acceso_usuario(imagen):
 
     try:
         resultado = DeepFace.represent(img_path=imagen, 
-                                        model_name="VGG-Face", 
+                                        model_name="Facenet", 
                                         enforce_detection=False,
                                         detector_backend="skip")
         vec = resultado[0]["embedding"]
@@ -40,7 +40,7 @@ def acceso_usuario(imagen):
 
             print(f"Comparando con {nombre}: Distancia = {dist}")
 
-        umbral = 1
+        umbral = 0.8
         if min_dist > umbral:
             return None
 
@@ -64,6 +64,10 @@ def registrar_nuevo_usuario(nombre, ruta_img):
     if os.path.exists(archivo_pkl):
         with open(archivo_pkl,'rb') as f:
             base_datos_vectores = pickle.load(f)
+
+    if nombre in base_datos_vectores.keys():
+        print("Ese nombre de usuario ya esta registrado, por favor introduzca uno distinto")
+        return
 
     try:
         base_options = python.BaseOptions(model_asset_path='blaze_face_short_range.tflite')
@@ -99,7 +103,7 @@ def registrar_nuevo_usuario(nombre, ruta_img):
                 return
             
             resultado = DeepFace.represent(img_path=rostro_persona, 
-                                            model_name="VGG-Face", 
+                                            model_name="Facenet", 
                                             enforce_detection=False,
                                             detector_backend="skip")
             base_datos_vectores[nombre] = resultado[0]["embedding"]
