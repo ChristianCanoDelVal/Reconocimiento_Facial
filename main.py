@@ -80,6 +80,10 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("ruta_video")
     args = parser.parse_args()
+    
+    # Si el argumento introducido es un número (ej. 0), lo transformamos a entero
+    entrada_video = args.ruta_video
+    if entrada_video.isdigit():
+        entrada_video = int(entrada_video)
 
-    #ruta_video = "prueba.mp4"
-    procesar_video(args.ruta_video)
+    procesar_video(entrada_video)
